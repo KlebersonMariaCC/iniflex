@@ -1,4 +1,4 @@
-package com.projedata;
+package br.com.projedata;
 
 /**
  * Hello world!

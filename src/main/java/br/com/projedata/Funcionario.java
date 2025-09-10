@@ -1,4 +1,4 @@
-package com.projedata;
+package br.com.projedata;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
