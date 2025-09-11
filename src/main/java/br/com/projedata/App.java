@@ -24,7 +24,9 @@ public class App
         criarTabelas();
         System.out.println( "Hello World!" );
 
-        inserirDados();
+        //inserirDados();
+
+        removerFuncionarioPorNome("João");
     }
     
     public static void criarTabelas()  {
@@ -110,6 +112,23 @@ public class App
     }
 
     public static void removerFuncionarioPorNome(String nome){
-        
+        String sql ="DELETE FROM funcionario WHERE nome = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);) {
+            if (conn != null) {
+                try(PreparedStatement pstmt = conn.prepareStatement(sql);){
+                    pstmt.setString(1, nome);
+                    int rowsAffected = pstmt.executeUpdate();
+                    if (rowsAffected > 0) {
+                        System.out.println("Funcionário " + "nome" + "removido com sucesso.");
+                    } else {
+                        System.out.println("Nenhum funcionário encontrado com o nome fornecido.");
+                    }
+                } catch (SQLException e) {
+                    lidarComErro(e, "Erro ao remover funcionário: ");
+                }
+            }
+        } catch (SQLException e) {
+            lidarComErro(e, "Erro ao conectar com o banco de dados: ");
+        }
     }
 }

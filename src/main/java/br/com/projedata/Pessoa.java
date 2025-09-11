@@ -1,5 +1,6 @@
 package br.com.projedata;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -9,7 +10,6 @@ public class Pessoa {
     LocalDate dataNascimento;
 
     static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
 
     public Pessoa(String nome, LocalDate dataNascimento) {
         this.nome = nome;

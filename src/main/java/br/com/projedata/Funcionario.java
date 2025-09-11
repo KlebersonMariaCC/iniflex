@@ -1,12 +1,17 @@
 package br.com.projedata;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Funcionario extends Pessoa {
     
     BigDecimal salario;
     String funcao;
+
+    static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    static final DecimalFormat FORMATO_SALARIO = new DecimalFormat("#,##0.00");
     
     public Funcionario(String nome, LocalDate dataNascimento,BigDecimal salario , String funcao ) {
         super(nome, dataNascimento);
@@ -38,9 +43,9 @@ public class Funcionario extends Pessoa {
     @Override
     public String toString() {
         return "Funcionario [id=" + id + ", nome=" + nome + ", funcao=" + funcao + ", dataNascimento=" + dataNascimento.format(FORMATO_DATA) + ", salario="
-                + salario + "]";
+                + FORMATO_SALARIO.format(salario) + "]";
     }
-
+ 
 
     @Override
     public int hashCode() {
