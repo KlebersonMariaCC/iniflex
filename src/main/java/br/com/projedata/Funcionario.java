@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Funcionario extends Pessoa {
-    String funcao;
-    BigDecimal salario;
-
     
-    public Funcionario(String nome, LocalDate dataNascimento, String funcao, BigDecimal salario) {
+    BigDecimal salario;
+    String funcao;
+    
+    public Funcionario(String nome, LocalDate dataNascimento,BigDecimal salario , String funcao ) {
         super(nome, dataNascimento);
         this.funcao = funcao;
         this.salario = salario;
@@ -37,7 +37,7 @@ public class Funcionario extends Pessoa {
 
     @Override
     public String toString() {
-        return "Funcionario [nome=" + nome + ", funcao=" + funcao + ", dataNascimento=" + dataNascimento.format(FORMATO_DATA) + ", salario="
+        return "Funcionario [id=" + id + ", nome=" + nome + ", funcao=" + funcao + ", dataNascimento=" + dataNascimento.format(FORMATO_DATA) + ", salario="
                 + salario + "]";
     }
 
