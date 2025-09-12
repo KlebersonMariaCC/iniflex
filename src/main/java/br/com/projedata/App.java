@@ -4,7 +4,11 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -34,9 +38,11 @@ public class App
 
         recuperaFuncionarios();
 
-        atualizarSalarios(new BigDecimal("0.10"));
+        //atualizarSalarios(new BigDecimal("0.10"));
 
-        recuperaFuncionarios();
+        //recuperaFuncionarios();
+
+        agruparFuncionariosPorFuncao();
     }
     
     public static void criarTabelas()  {
@@ -222,4 +228,50 @@ public class App
             lidarComErro(e, "Erro ao conectar com o banco de dados: ");
         }
     }
+
+    public static void agruparFuncionariosPorFuncao () {
+
+        try(Connection conn = DriverManager.getConnection(DB_URL);) {
+            if (conn != null) {
+                List<Funcionario> funcionarios = new ArrayList<>();
+                String sql = "SELECT id, nome, data_nascimento, salario, funcao FROM funcionario";
+                    try(PreparedStatement pstmt = conn.prepareStatement(sql);){
+                    var rs = pstmt.executeQuery();
+                    while(rs.next()){
+                        Integer id = rs.getInt("id");
+                        String nome = rs.getString("nome");
+                        LocalDate dataNascimento = LocalDate.parse(rs.getString("data_nascimento"), FORMATO_DATA_BD);
+                        BigDecimal salario = rs.getBigDecimal("salario");
+                        String funcao = rs.getString("funcao");
+
+                        Funcionario funcionario = new Funcionario(nome, dataNascimento, salario, funcao);
+                        funcionario.setId(id);
+                    funcionarios.add(funcionario);
+                    }
+               } catch (SQLException e) {
+                lidarComErro(e, "Erro ao agrupar funcionários por função: ");
+               }
+
+                Map<String,List<Funcionario>> funcionariosAgrupados = funcionarios.stream()
+                .collect(Collectors.groupingBy(Funcionario::getFuncao, TreeMap::new, 
+                Collectors.collectingAndThen(Collectors.toList(), 
+                lista -> {
+                    lista.sort(Comparator.comparing(Funcionario::getNome));
+                    return lista;
+                })));
+                
+                System.out.println("Funcionários agrupados por função:");
+                funcionariosAgrupados.forEach((funcao, listaDeFuncionarios) -> {
+                    System.out.println("- " + funcao + ":");
+                    listaDeFuncionarios.forEach(funcionario -> System.out.println("  " + funcionario));
+                });
+            }
+            
+        } catch (SQLException e) {
+            lidarComErro(e, "Erro ao conectar com o banco de dados: ");
+        }
+    
+    }
+    
+
 }
