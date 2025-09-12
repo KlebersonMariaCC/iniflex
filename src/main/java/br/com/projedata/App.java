@@ -19,6 +19,8 @@ public class App
     static final String INSERT_FILE = "dados.csv";
     static final String SCHEMA_FILE = "schema.sql";
 
+    static final DateTimeFormatter FORMATO_DATA_BD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     public static void main( String[] args )
     {
         criarTabelas();
@@ -27,6 +29,8 @@ public class App
         //inserirDados();
 
         removerFuncionarioPorNome("João");
+
+        recuperaFuncionarios();
     }
     
     public static void criarTabelas()  {
@@ -125,6 +129,30 @@ public class App
                     }
                 } catch (SQLException e) {
                     lidarComErro(e, "Erro ao remover funcionário: ");
+                }
+            }
+        } catch (SQLException e) {
+            lidarComErro(e, "Erro ao conectar com o banco de dados: ");
+        }
+    } public static void recuperaFuncionarios(){
+        String sql = "SELECT id, nome, data_nascimento, salario, funcao FROM funcionario";
+        try (Connection conn = DriverManager.getConnection(DB_URL);) {
+            if (conn != null) {
+                try(PreparedStatement pstmt = conn.prepareStatement(sql);){
+                    var rs = pstmt.executeQuery();
+                    while(rs.next()){
+                        Integer id = rs.getInt("id");
+                        String nome = rs.getString("nome");
+                        LocalDate dataNascimento = LocalDate.parse(rs.getString("data_nascimento"), FORMATO_DATA_BD);
+                        BigDecimal salario = rs.getBigDecimal("salario");
+                        String funcao = rs.getString("funcao");
+
+                        Funcionario funcionario = new Funcionario(nome, dataNascimento, salario, funcao);
+                        funcionario.setId(id);
+                        System.out.println(funcionario);
+                    }
+                } catch (SQLException e) {
+                    lidarComErro(e, "Erro ao recuperar funcionários: ");
                 }
             }
         } catch (SQLException e) {

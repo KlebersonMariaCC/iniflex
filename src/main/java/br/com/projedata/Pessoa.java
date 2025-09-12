@@ -9,7 +9,7 @@ public class Pessoa {
     String nome;
     LocalDate dataNascimento;
 
-    static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    
 
     public Pessoa(String nome, LocalDate dataNascimento) {
         this.nome = nome;
@@ -56,7 +56,7 @@ public class Pessoa {
     @Override
     public String toString() {
         
-        return "Pessoa [id=" + id + ", nome=" + nome + ", dataNascimento=" + dataNascimento.format(FORMATO_DATA) + "]";
+        return "Pessoa [id=" + id + ", nome=" + nome + ", dataNascimento=" + dataNascimento.format(Util.FORMATO_DATA) + "]";
     }
 
 
