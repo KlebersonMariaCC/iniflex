@@ -3,12 +3,14 @@ package br.com.projedata;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -29,6 +31,10 @@ public class App
         //inserirDados();
 
         removerFuncionarioPorNome("João");
+
+        recuperaFuncionarios();
+
+        atualizarSalarios(new BigDecimal("0.10"));
 
         recuperaFuncionarios();
     }
@@ -153,6 +159,63 @@ public class App
                     }
                 } catch (SQLException e) {
                     lidarComErro(e, "Erro ao recuperar funcionários: ");
+                }
+            }
+        } catch (SQLException e) {
+            lidarComErro(e, "Erro ao conectar com o banco de dados: ");
+        }
+    }
+
+     public static void atualizarSalarios(BigDecimal percentualAumento) {
+        if (percentualAumento.signum() <= 0 
+        || percentualAumento.compareTo(BigDecimal.ONE) > 0) {
+            System.out.println("Percentual de aumento inválido. Deve ser maior que 0 e menor ou igual a 1.");
+            
+        }
+        try (Connection conn = DriverManager.getConnection(DB_URL);) {
+            if (conn != null) {
+                int rowsAffected = 0;
+                conn.setAutoCommit(false); 
+                List<Funcionario> funcionarios = new ArrayList<>();
+                String sql = "SELECT id, nome, data_nascimento, salario, funcao FROM funcionario";
+                try(PreparedStatement pstmt = conn.prepareStatement(sql);){
+                    var rs = pstmt.executeQuery();
+                    while(rs.next()){
+                        Integer id = rs.getInt("id");
+                        String nome = rs.getString("nome");
+                        LocalDate dataNascimento = LocalDate.parse(rs.getString("data_nascimento"), FORMATO_DATA_BD);
+                        BigDecimal salario = rs.getBigDecimal("salario").multiply(BigDecimal.ONE.add(percentualAumento));
+                        String funcao = rs.getString("funcao");
+                        Funcionario funcionario = new Funcionario(nome, dataNascimento, salario, funcao);
+                        funcionario.setId(id);
+                        funcionarios.add(funcionario);
+                        
+                    }
+                    
+                    String updateSql = "UPDATE funcionario SET salario = ? WHERE id = ?";
+
+                    try (PreparedStatement pstmtUpdate = conn.prepareStatement(updateSql)) {
+                        for (Funcionario funcionario : funcionarios) {
+                        
+                        
+                            pstmtUpdate.setBigDecimal(1, funcionario.getSalario());
+                            pstmtUpdate.setInt(2, funcionario.getId());
+                            pstmtUpdate.addBatch();
+                        }
+
+                        rowsAffected = IntStream.of(pstmtUpdate.executeBatch()).sum();
+                         
+                    } catch(SQLException e) {
+                        conn.rollback(); 
+                        lidarComErro(e, "Erro ao atualizar salários: ");
+                        return;
+                    }
+
+                    conn.commit();
+
+                    System.out.println("Salários atualizados para " + rowsAffected + " funcionários.");
+                } catch (SQLException e) {
+                    lidarComErro(e, "Erro ao atualizar salários: ");
                 }
             }
         } catch (SQLException e) {

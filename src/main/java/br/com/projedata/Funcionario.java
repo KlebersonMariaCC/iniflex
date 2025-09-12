@@ -1,9 +1,7 @@
 package br.com.projedata;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 public class Funcionario extends Pessoa {
     
@@ -76,7 +74,7 @@ public class Funcionario extends Pessoa {
         return true;
     }
 
-    
+   
 
     
     
