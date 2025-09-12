@@ -30,19 +30,30 @@ public class App
     public static void main( String[] args )
     {
         criarTabelas();
-        System.out.println( "Hello World!" );
 
+        //Questão 3.1 (só precisa rodar uma vez pra cada banco do zero)
         //inserirDados();
 
+        //Questão 3.2
         removerFuncionarioPorNome("João");
 
+        //Questão 3.3
         recuperaFuncionarios();
 
-        //atualizarSalarios(new BigDecimal("0.10"));
+        //Questão 3.4
+        /*
+        atualizarSalarios(new BigDecimal("0.10"));
+        recuperaFuncionarios();
+        */
 
-        //recuperaFuncionarios();
-
+        //Questão 3.5 e 3.6
         agruparFuncionariosPorFuncao();
+
+        //questão 3.8
+        recuperarFuncionariosPorMesAniversario(10);
+        recuperarFuncionariosPorMesAniversario(12);
+
+
     }
     
     public static void criarTabelas()  {
@@ -176,6 +187,7 @@ public class App
         if (percentualAumento.signum() <= 0 
         || percentualAumento.compareTo(BigDecimal.ONE) > 0) {
             System.out.println("Percentual de aumento inválido. Deve ser maior que 0 e menor ou igual a 1.");
+            return;
             
         }
         try (Connection conn = DriverManager.getConnection(DB_URL);) {
@@ -272,6 +284,45 @@ public class App
         }
     
     }
-    
 
+    public static void recuperarFuncionariosPorMesAniversario(int mes) {
+        if (mes < 1 || mes > 12) {
+            System.out.println("Mês inválido. Deve ser entre 1 e 12.");
+            return;
+        }
+
+        String sql = "SELECT id, nome, data_nascimento, salario, funcao FROM funcionario WHERE strftime('%m', data_nascimento) = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);) {
+            if (conn != null) {
+                try (PreparedStatement pstmt = conn.prepareStatement(sql);) {
+                    pstmt.setString(1, String.format("%02d", mes));
+                    var rs = pstmt.executeQuery();
+                    List<Funcionario> funcionarios = new ArrayList<>();
+                    while (rs.next()) {
+                        Integer id = rs.getInt("id");
+                        String nome = rs.getString("nome");
+                        LocalDate dataNascimento = LocalDate.parse(rs.getString("data_nascimento"), FORMATO_DATA_BD);
+                        BigDecimal salario = rs.getBigDecimal("salario");
+                        String funcao = rs.getString("funcao");
+
+                        Funcionario funcionario = new Funcionario(nome, dataNascimento, salario, funcao);
+                        funcionario.setId(id);
+                        funcionarios.add(funcionario);
+                    }
+
+                    if (funcionarios.isEmpty()) {
+                        System.out.println("Nenhum funcionário encontrado com aniversário no mês " + mes + ".");
+                    } else {
+                        System.out.println("Funcionários com aniversário no mês " + mes + ":");
+                        funcionarios.forEach(System.out::println);
+                    }
+                } catch (SQLException e) {
+                    lidarComErro(e, "Erro ao recuperar funcionários por mês de aniversário: ");
+                }
+            }
+        } catch (SQLException e) {
+            lidarComErro(e, "Erro ao conectar com o banco de dados: ");
+        }
+    }
+    
 }
