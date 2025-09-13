@@ -60,6 +60,9 @@ public class App
         //Questão 3.10
         recuperarFuncionariosOrdenados();
 
+        //Questão 3.11
+        calcularCustoSalarios();
+
 
     }
     
@@ -382,6 +385,26 @@ public class App
             lidarComErro(e, "Erro ao conectar com o banco de dados: ");
         }
     }
-
+    
+    public static void calcularCustoSalarios() {
+        try (Connection conn = DriverManager.getConnection(DB_URL);){
+            String sql = "SELECT SUM(salario) AS custo_total FROM funcionario";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql);){
+                var rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    BigDecimal custoTotal = rs.getBigDecimal("custo_total");
+                    System.out.println("Custo total com salários: " + 
+                    Util.FORMATO_SALARIO.format(custoTotal));
+                } else {
+                    System.out.println("Não foi possível calcular o custo total com salários.");
+                }
+            } catch (SQLException e) {
+                lidarComErro(e, "Erro ao calcular custo total com salários: ");
+            }
+        } catch (SQLException e) {
+           lidarComErro(e, "Erro ao conectar com o banco de dados: ");
+        }
+    }
+    
 
 }
