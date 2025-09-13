@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -27,9 +28,12 @@ public class App
     static final String SCHEMA_FILE = "schema.sql";
 
     static final DateTimeFormatter FORMATO_DATA_BD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    static final double SALARIO_MINIMO = 1212.00;
 
     public static void main( String[] args )
     {
+       
+        
         criarTabelas();
 
         //Questão 3.1 (só precisa rodar uma vez pra cada banco do zero)
@@ -41,7 +45,7 @@ public class App
         //Questão 3.3
         recuperaFuncionarios();
 
-        //Questão 3.4 (S usar uma direot sempre va atalizar)
+        //Questão 3.4 (Se usar direto sempre va atualizar)
         /*
         atualizarSalarios(new BigDecimal("0.10"));
         recuperaFuncionarios();
@@ -62,6 +66,9 @@ public class App
 
         //Questão 3.11
         calcularCustoSalarios();
+        
+        //Questão 3.12
+        qtdSalariosFuncionarios();
 
 
     }
@@ -405,6 +412,25 @@ public class App
            lidarComErro(e, "Erro ao conectar com o banco de dados: ");
         }
     }
-    
+     public static void qtdSalariosFuncionarios(){
+        try (Connection conn = DriverManager.getConnection(DB_URL);){ 
+            String sql = "SELECT id, nome, salario FROM funcionario";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql);){
+                var rs = pstmt.executeQuery();
+                while(rs.next()){
+                    Integer id = rs.getInt("id");
+                    String nome = rs.getString("nome");
+                    BigDecimal salario = rs.getBigDecimal("salario");
+                    BigDecimal qtdSalarios = salario.divide(new BigDecimal(SALARIO_MINIMO),2,RoundingMode.HALF_UP);
+                    System.out.println("Funcionário [id=" + id + ", nome=" + nome +
+                    ", quantidade de salários= " + qtdSalarios + "]");
+                }
+            } catch (SQLException e) {
+                lidarComErro(e, "Erro ao calcular quantidade de salários: ");
+            }
+        } catch (SQLException e) {
+            lidarComErro(e, "Erro ao conectar com o banco de dados: ");
+        }
+    }
 
 }
