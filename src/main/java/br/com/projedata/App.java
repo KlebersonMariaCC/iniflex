@@ -40,7 +40,7 @@ public class App
         //Questão 3.3
         recuperaFuncionarios();
 
-        //Questão 3.4
+        //Questão 3.4 (S usar uma direot sempre va atalizar)
         /*
         atualizarSalarios(new BigDecimal("0.10"));
         recuperaFuncionarios();
@@ -52,6 +52,9 @@ public class App
         //questão 3.8
         recuperarFuncionariosPorMesAniversario(10);
         recuperarFuncionariosPorMesAniversario(12);
+
+        //questão 3.9
+        recuperarFuncionarioMaiorIdade();
 
 
     }
@@ -324,5 +327,30 @@ public class App
             lidarComErro(e, "Erro ao conectar com o banco de dados: ");
         }
     }
+
+    public static void recuperarFuncionarioMaiorIdade() {
+        try(Connection conn = DriverManager.getConnection(DB_URL);) {
+            if (conn != null) {
+                String sql = "SELECT nome, data_nascimento FROM funcionario ORDER BY data_nascimento ASC LIMIT 1";
+
+                try (PreparedStatement pstmt = conn.prepareStatement(sql);){
+                    var rs = pstmt.executeQuery();
+                    while(rs.next()){
+                        String nome = rs.getString("nome");
+                        LocalDate dataNascimento = LocalDate.parse(rs.getString("data_nascimento"),FORMATO_DATA_BD);
+                        int idade = LocalDate.now().getYear() - dataNascimento.getYear();
+                        System.out.println("-- Funcionário  de Maior idade --\n" +
+                        "Nome: " + nome + "\nData de Nascimento: " + dataNascimento.format(Util.FORMATO_DATA) +
+                        "\nIdade: " + idade + " anos");
+                    }
+                }catch (SQLException e){
+                    lidarComErro(e, "Erro ao recuperar funcionário de maior idade: ");
+                }
+            }
+        } catch (SQLException e ){
+            lidarComErro(e, "Erro ao conectar com o banco de dados: ");
+        }
+    }
+
     
 }
