@@ -57,6 +57,9 @@ public class App
         //questão 3.9
         recuperarFuncionarioMaiorIdade();
 
+        //Questão 3.10
+        recuperarFuncionariosOrdenados();
+
 
     }
     
@@ -350,6 +353,32 @@ public class App
                 }
             }
         } catch (SQLException e ){
+            lidarComErro(e, "Erro ao conectar com o banco de dados: ");
+        }
+    }
+
+    public static void recuperarFuncionariosOrdenados() {
+        try (Connection conn = DriverManager.getConnection(DB_URL);){
+            if (conn != null){
+                String sql = "SELECT id, nome, data_nascimento, salario, funcao FROM funcionario ORDER BY nome ASC";
+                 try(PreparedStatement pstmt = conn.prepareStatement(sql);){
+                    var rs = pstmt.executeQuery();
+                    while(rs.next()){
+                        Integer id = rs.getInt("id");
+                        String nome = rs.getString("nome");
+                        LocalDate dataNascimento = LocalDate.parse(rs.getString("data_nascimento"), FORMATO_DATA_BD);
+                        BigDecimal salario = rs.getBigDecimal("salario");
+                        String funcao = rs.getString("funcao");
+                        
+                        Funcionario funcionario = new Funcionario(nome, dataNascimento, salario, funcao);
+                        funcionario.setId(id);
+                        System.out.println(funcionario);
+                    }
+                 } catch (SQLException e ){
+                    lidarComErro(e, "Erro ao recuperar funcionários ordenados: ");
+                 }
+            }
+        } catch(SQLException e){
             lidarComErro(e, "Erro ao conectar com o banco de dados: ");
         }
     }
