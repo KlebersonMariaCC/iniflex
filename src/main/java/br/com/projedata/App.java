@@ -2,6 +2,7 @@ package br.com.projedata;
 
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -338,7 +339,8 @@ public class App
                     while(rs.next()){
                         String nome = rs.getString("nome");
                         LocalDate dataNascimento = LocalDate.parse(rs.getString("data_nascimento"),FORMATO_DATA_BD);
-                        int idade = LocalDate.now().getYear() - dataNascimento.getYear();
+                        Period periodo  = Period.between(dataNascimento, LocalDate.now());
+                        int idade =  periodo.getYears();
                         System.out.println("-- Funcionário  de Maior idade --\n" +
                         "Nome: " + nome + "\nData de Nascimento: " + dataNascimento.format(Util.FORMATO_DATA) +
                         "\nIdade: " + idade + " anos");
@@ -352,5 +354,5 @@ public class App
         }
     }
 
-    
+
 }
