@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -30,47 +31,96 @@ public class App
     static final DateTimeFormatter FORMATO_DATA_BD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     static final double SALARIO_MINIMO = 1212.00;
 
-    public static void main( String[] args )
-    {
-       
+    public static void main( String[] args ){
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Bem Vindo\n");
+
+        while(true) {
+            
+            System.out.println("\nEscolha uma opção:\n");
+            System.out.println("1 - Criar tabelas");
+            System.out.println("2 - Inserir dados do csv");
+            System.out.println("3 - Listar todos os funcionários");
+            System.out.println("4 - Remover funcionário por nome");
+            System.out.println("5 - Aumentar salários");
+            System.out.println("6 - Agrupar funcionários por função");
+            System.out.println("7 - Listar funcionários por mês de aniversário");
+            System.out.println("8 - Funcionário de maior idade");
+            System.out.println("9 - Listar funcionários ordenados por nome");
+            System.out.println("10 - Custo total com salários");
+            System.out.println("11 - Quantidade de salários de cada funcionário");
+            System.out.println("0 - Sair\n");
+            System.out.print(">>> ");
+             try {
+                int opcao = Integer.parseInt(sc.nextLine());
+                if (opcao == 0) {
+                    System.out.println("Saindo...");
+                    sc.close();
+                    break;
+                }
+                switch (opcao) {
+                case 1:
+
+                    criarTabelas();
+                    
+                    break;
+                case 2:
+                    inserirDados();
+                    break;
+                case 3:
+                    recuperaFuncionarios();
+                    break;
+                case 4:
+                    System.out.println("Digite o nome do funcionário a ser removido:");
+                    String nome = sc.nextLine();
+                    removerFuncionarioPorNome(nome);
+                    break;
+                case 5:
+                    System.out.println("Digite o percentual de aumento "+
+                    "em decimal entre 0 e 1 (ex: 0.10 para 10%):");
+                    try {
+                        BigDecimal percentualAumento = new BigDecimal(sc.nextLine());
+                        atualizarSalarios(percentualAumento);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Percentual inválido, tente novamente.");
+                    }
+                    break;
+                case 6:
+                    agruparFuncionariosPorFuncao();
+                    break;
+                case 7:
+                    System.out.println("Digite o mês (1-12) para listar os aniversariantes: ");
+                    try {
+                        int mes = Integer.parseInt(sc.nextLine());
+                        recuperarFuncionariosPorMesAniversario(mes);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Mês inválido, tente novamente.");
+                    }
+                    break;
+                case 8:
+                    recuperarFuncionarioMaiorIdade();
+                    break;
+                case 9:
+                    recuperarFuncionariosOrdenados();
+                    break;
+                case 10:
+                    calcularCustoSalarios();
+                    break;
+                case 11:
+                    qtdSalariosFuncionarios();
+                    break;
+                default:
+                    System.out.println("Opção inválida, tente novamente.");
+                    break;
+                }
+                
+            }catch (Exception e) {
+                System.err.println("Opção inválida, tente novamente.");
+            }
+        }                
         
-        criarTabelas();
-
-        //Questão 3.1 (só precisa rodar uma vez pra cada banco do zero)
-        //inserirDados();
-
-        //Questão 3.2
-        removerFuncionarioPorNome("João");
-
-        //Questão 3.3
-        recuperaFuncionarios();
-
-        //Questão 3.4 (Se usar direto sempre va atualizar)
-        /*
-        atualizarSalarios(new BigDecimal("0.10"));
-        recuperaFuncionarios();
-        */
-
-        //Questão 3.5 e 3.6
-        agruparFuncionariosPorFuncao();
-
-        //questão 3.8
-        recuperarFuncionariosPorMesAniversario(10);
-        recuperarFuncionariosPorMesAniversario(12);
-
-        //questão 3.9
-        recuperarFuncionarioMaiorIdade();
-
-        //Questão 3.10
-        recuperarFuncionariosOrdenados();
-
-        //Questão 3.11
-        calcularCustoSalarios();
-        
-        //Questão 3.12
-        qtdSalariosFuncionarios();
-
-
     }
     
     public static void criarTabelas()  {
@@ -101,6 +151,7 @@ public class App
                             sb.setLength(0); // Limpa o StringBuilder para a próxima instrução
                         } 
                     }
+                    System.out.println("Tabelas criadas com sucesso.");
                 } catch (IOException e) {
                     lidarComErro(e, "Erro ao ler o arquivo schema.sql: ");
                 }
@@ -137,6 +188,7 @@ public class App
                                 pstmt.setString(4, funcionario.getFuncao());
                                 pstmt.execute();
                         }
+                        System.out.println("Dados inseridos com sucesso.");
                     } catch (SQLException e) {
                         lidarComErro(e, "Erro ao inserir dados no banco: ");
                             
@@ -163,7 +215,7 @@ public class App
                     pstmt.setString(1, nome);
                     int rowsAffected = pstmt.executeUpdate();
                     if (rowsAffected > 0) {
-                        System.out.println("Funcionário " + "nome" + "removido com sucesso.");
+                        System.out.println("Funcionário " + nome + " removido com sucesso.");
                     } else {
                         System.out.println("Nenhum funcionário encontrado com o nome fornecido.");
                     }
