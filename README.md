@@ -1,61 +1,53 @@
-# iniflex
-Projeto de teste prático para vaga de Desenvolvedor Júnior da Projedata.
- 
-## Desafio
+# Iniflex  
+Projeto de teste prático para vaga de **Desenvolvedor Júnior** da **Projedata**.  
 
-TESTE PRÁTICO PROGRAMAÇÃO.
+## 📌 Desafio  
 
-Considerando que uma indústria possui as pessoas/funcionários abaixo:
+O teste consistia em implementar um sistema em Java para manipulação de uma lista de funcionários a partir de requisitos pré-definidos, como inserção, remoção, ordenação, agrupamento e cálculos de salários.  
+### Pré-Requisitos de instalação
+- **Java 17+**
+- **maven 3.9+**
+- **SQlite 3**
 
-Diante disso, você deve desenvolver um projeto java, com os seguintes requisitos:
- 
-1– Classe Pessoa com os atributos: nome (String) e data nascimento (LocalDate).
+### Requisitos principais
+1. Classe `Pessoa` com atributos `nome (String)` e `dataNascimento (LocalDate)`.  
+2. Classe `Funcionario`, estendendo `Pessoa`, com atributos `salario (BigDecimal)` e `funcao (String)`.  
+3. Classe `Principal` para executar:  
+   - Inserção e remoção de funcionários.  
+   - Impressão formatada de dados (datas e valores numéricos).  
+   - Atualização de salários (+10%).  
+   - Agrupamento por função em `Map<String, List<Funcionario>>`.  
+   - Filtros de aniversariantes.  
+   - Identificação do funcionário mais velho.  
+   - Ordenação alfabética.  
+   - Soma dos salários.  
+   - Cálculo de quantos salários mínimos cada funcionário recebe.  
 
-2 – Classe Funcionário que estenda a classe Pessoa, com os atributos: salário (BigDecimal) e função (String).
+A tabela utilizada como base está representada abaixo:  
 
-3 – Deve conter uma classe Principal para executar as seguintes ações:
+![Tabela de funcionários](dados.png)  
 
-3.1 – Inserir todos os funcionários, na mesma ordem e informações da tabela acima.
+##  Tecnologias  
 
-3.2 – Remover o funcionário “João” da lista.
+- **SQLite + JDBC** para gerenciamento do Banco de Dados 
+- **Maven**, para facilitar a organização, o gerenciamento de dependências e a execução.  
 
-3.3 – Imprimir todos os funcionários com todas suas informações, sendo que:
 
- • informação de data deve ser exibido no formato dd/mm/aaaa;
 
- • informação de valor numérico deve ser exibida no formatadocom separador de milhar como ponto e decimal como vírgula.
+## ▶️ Execução  
 
-3.4 – Os funcionários receberam 10% de aumento de salário, atualizar a lista de funcionários com novo valor.
+Clone o repositório e execute os comandos:  
 
-3.5 – Agrupar os funcionários por função em um MAP, sendo a chave a “função” e o valor a “lista de funcionários”.
+```bash
+# compilar e empacotar
+mvn clean package  
 
-3.6 – Imprimir os funcionários, agrupados por função.
+# executar
+java -jar ./target/iniflex-1.0-SNAPSHOT-jar-with-dependencies.jar 
 
-3.8 – Imprimir os funcionários que fazem aniversário no mês 10 e 12.
+```
+## Próximos Passos
 
-3.9 – Imprimir o funcionário com a maior idade, exibir os atributos: nome e idade.
+- Implementar um CRUD completo para funcionários.
 
-3.10 – Imprimir a lista de funcionários por ordem alfabética.
-
-3.11 – Imprimir o total dos salários dos funcionários.
-
-3.12 – Imprimir quantos salários mínimos ganha cada funcionário, considerando que o salário mínimo é R$1212.00.
- 
-Orientações gerais:
-
- • você poderá utilizar a ferramenta que tem maior domínio (exemplos: eclipse, netbeans etc);
-
- • após finalizado o desenvolvimento, exportar o projeto e encaminhar o link do seu teste aqui mesmo na etapa Mão na Massa 🖐. 
-
-Basta Colar o link ainda aqui nessa etapa. 
-    \• Assim que recebermos seu projeto desenvolvido, será agendada uma entrevista com nosso time técnico para avaliação.
- 
-Esperamos que você use todo seu conhecimento e criatividade nesse teste. 
-
-Caso você não souber resolver determinado requisito comente no código que aquele item você não sabe como desenvolver, e vá para o próximo. Avaliaremos o que você conseguiu desenvolver e como foi desenvolvido.
- 
-Boa sorte!
-
-## Tabela de Funcionários
-
-![Tabela de funcionários](dados.png)
+- Adicionar testes automatizados.
