@@ -27,7 +27,7 @@ A tabela utilizada como base está representada abaixo:
 
 ![Tabela de funcionários](dados.png)  
 
-##  Tecnologias  
+## 💻 Tecnologias  
 
 - **SQLite + JDBC** para gerenciamento do Banco de Dados 
 - **Maven**, para facilitar a organização, o gerenciamento de dependências e a execução.  
@@ -47,6 +47,7 @@ java -jar ./target/iniflex-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 ```
 ## Próximos Passos
+- Refatoração (Conexões com o banco, tratamento de exceções, divisão de responsabilidades etc.).
 
 - Implementar um CRUD completo para funcionários.
 
