@@ -29,7 +29,7 @@ public class App
     static final String SCHEMA_FILE = "schema.sql";
 
     static final DateTimeFormatter FORMATO_DATA_BD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    static final double SALARIO_MINIMO = 1212.00;
+    static final BigDecimal SALARIO_MINIMO = new BigDecimal(1212.00);
 
     public static void main( String[] args ){
 
@@ -473,7 +473,7 @@ public class App
                     Integer id = rs.getInt("id");
                     String nome = rs.getString("nome");
                     BigDecimal salario = rs.getBigDecimal("salario");
-                    BigDecimal qtdSalarios = salario.divide(new BigDecimal(SALARIO_MINIMO),2,RoundingMode.HALF_UP);
+                    BigDecimal qtdSalarios = salario.divide(SALARIO_MINIMO,2,RoundingMode.HALF_UP);
                     System.out.println("Funcionário [id=" + id + ", nome=" + nome +
                     ", quantidade de salários= " + qtdSalarios + "]");
                 }
